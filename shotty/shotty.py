@@ -16,6 +16,13 @@ def filter_instances(product):
 
     return instances
 
+def has_pending_snapshot(volume):
+    snapshots = list(volume.snapshots.all())
+    # Return either true or False
+    # If there are snapshot, it will return the result of snapshot[0].state == 'pending'
+    # If there isn't, it will return snapshots which is false or empty list
+    return snapshots and snapshots[0].state == 'pending'
+
 @click.group()
 def cli():
     """Shotty manages snapshots"""
@@ -94,6 +101,10 @@ def create_snapshots(product):
         i.wait_until_stopped()
 
         for v in i.volumes.all():
+            if has_pending_snapshot(v):
+                print("  Skipping {0}, snapshot already in progress".format(v.id))
+                continue
+
             print("  Creating snapshot of {0}".format(v.id))
             v.create_snapshot(Description="Created by Shotty")
 
