@@ -13,7 +13,8 @@ shotty uses the configuration file created by the AWL cli e.g.
 
 ## Running
 
-`pipenv run python shotty/shotty.py <command> <--product=PRODUCT>`
+`pipenv run python shotty/shotty.py <command> <subcommand> <--product=PRODUCT>`
 
-*command* is list, start, or stop
+*command* is instances, volumes, or snapshots
+*subcommand* depends on command e.g. snapshots, list, start, or stop
 *project* is optional
