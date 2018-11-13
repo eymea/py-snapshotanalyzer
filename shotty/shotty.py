@@ -27,7 +27,10 @@ def snapshots():
 @snapshots.command('list')
 @click.option('--product', default=None,
     help="Only instances for project (tag Product:<name>)")
-def list_snapshots(product):
+# If --all is present, list_all is true
+@click.option('--all', 'list_all', default=False, is_flag=True,
+    help="List all snapshots for each volume, not just the most recent")
+def list_snapshots(product, list_all):
     "List EC2 snapshots"
     instances = filter_instances(product)
 
@@ -42,6 +45,10 @@ def list_snapshots(product):
                     s.progress,
                     s.start_time.strftime("%c")
                 )))
+
+                # Boto3 return the latest snapshot first. The following will
+                # break after the latest. Unless list_all
+                if s.state == 'completed' and not list_all: break
 
     return
 
